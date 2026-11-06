@@ -121,7 +121,13 @@ example (p q r s : Prop) (h : p → r) (h' : q → s) : p ∧ q → r ∧ s := b
 
 /- Exercise: prove this. Hint: you can do this in one line. -/
 example (p q r s : Prop) (h : p ↔ r) (h' : q ↔ s) : p ∧ q ↔ r ∧ s := by
-  sorry
+  -- constructor
+  -- · intro hpq
+  --   constructor
+  --   ·
+
+  -- · sorry
+  rw[h, h']
 
 
 /-- The function`f : ℝ → ℝ` is continuous at `x₀`.-/

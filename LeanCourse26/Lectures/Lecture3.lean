@@ -184,7 +184,22 @@ def Continuous' (f : ℝ → ℝ):= ∀ x, ContinuousAtPoint f x
 -- Exercise: prove this
 example (f g : ℝ → ℝ) (hfg : ∀ x, ContinuousAtPoint f x ↔ ContinuousAtPoint g x) :
     Continuous' f ↔ Continuous' g := by
-  sorry
+  unfold Continuous'
+  constructor
+  · intro hf
+    intro x
+    apply (hfg x ).1 (hf x)
+  · sorry
+
+
+
+
+
+
+
+
+
+
 
 
 /- ## Existential quantifiers -/
@@ -195,7 +210,7 @@ In order to prove `∃ x, P x`, we give some `x₀` using tactic `use x₀` and
 then prove `P x₀`. This `x₀` can be any expression.
 You can also use `exact ⟨x₀, hPx₀⟩`, where `hPx₀ : P x₀`.
 
-In order to use `h : ∃ x, P x`, we use can use
+In order to use `h : ∃ x, P x`, we can use
 `obtain ⟨x₀, hx₀⟩ := h`
 to fix one `x₀` that works.
 -/

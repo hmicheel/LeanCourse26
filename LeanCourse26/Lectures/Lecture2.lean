@@ -75,7 +75,7 @@ so it has type `ℕ → Prop`. -/
 #check Nat.factorial (3 + 4)
 #check fun n ↦ n !
 #check (3 + 4)!
-#check fun n ↦ n! -- need a space.
+#check fun n ↦ n ! -- need a space.
 
 
 

@@ -1,4 +1,4 @@
--- Name: <insert your name here>
+-- Name: Henning Micheel
 
 module
 
@@ -64,7 +64,7 @@ lemma exercise_min_assoc : min a (min b c) = min (min a b) c := by
 
 -- Prove the following exercise. You can use mathlib tactics now.
 lemma exercise_min : min (min a (min (min b c) c)) d = min (min a (min d b)) c := by
-  sorry
+  order
 
 end Min
 
@@ -134,22 +134,81 @@ end Set
 /- Prove this without using lemmas from Mathlib. -/
 lemma image_and_intersection {α β : Type*} (f : α → β) (s : Set α) (t : Set β) :
     f '' s ∩ t = f '' (s ∩ f ⁻¹' t) := by
-  sorry
+  ext y
+  constructor
+  · simp
+    intro x xs fxy yt
+    use x
+    constructor
+    · constructor
+      · exact xs
+      · rw[fxy]
+        exact yt
+    · exact fxy
+  · simp
+    intro x xs fxt fxy
+    constructor
+    · use x
+    · rw [← fxy]
+      exact fxt
 
 /- Prove this without using lemmas from Mathlib. -/
 -- Note: we still use the `simp` tactic... which is using mathlib, but only in a mild way.
 -- That's a reasonable compromise for now.
 example {I : Type*} (f : α → β) (A : I → Set α) : (f '' ⋃ i, A i) = ⋃ i, f '' A i := by
-  sorry
+  ext y
+  constructor
+  · simp
+    intro x x1 xAx1 fxy
+    use x1
+    use x
+  · simp
+    intro x1 x xAx1 fxy
+    use x
+    constructor
+    · use x1
+    · exact fxy
 
 /- Prove this without using lemmas from Mathlib. -/
 example {a b c d : ℝ} (hab : a < b) : Icc a b ⊆ Ioo c d ↔ c < a ∧ b < d := by
-  sorry
+  constructor
+  · intro h
+    have ha : a ∈ Icc a b := ⟨le_refl a, le_of_lt hab⟩
+    have hb : b ∈ Icc a b := ⟨le_of_lt hab, le_refl b⟩
+    have ha' : a ∈ Ioo c d := by apply h ha
+    have hb' : b ∈ Ioo c d := by apply h hb
+    constructor
+    · exact ha'.1
+    · exact hb'.2
+  · intro h
+    obtain ⟨hca, hbd⟩ := h
+    unfold Icc Ioo
+    intro x hx
+    constructor
+    · linarith [hx.1, hx.2]
+    · linarith [hx.1, hx.2]
+
+
+
+
 
 /- Prove this by finding relevant lemmas in Mathlib. -/
 lemma preimage_square :
     (fun x : ℝ ↦ x ^ 2) ⁻¹' {y | y ≥ 16} = { x : ℝ | x ≤ -4 } ∪ { x : ℝ | x ≥ 4 } := by
-  sorry
+  ext x
+  simp
+  constructor
+  · intro h
+    by_contra hn
+    push Not at hn
+    obtain ⟨h1, h2⟩ := hn
+    nlinarith [mul_pos (by linarith : 0 < x + 4) (by linarith : 0 < 4 - x)]
+
+  · intro h
+    rcases h with h | h
+    · nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ -x - 4) (by linarith : (0:ℝ) ≤ -x + 4)]
+    · nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ x - 4) (by linarith : (0:ℝ) ≤ x + 4)]
+
 
 section Surjectivity
 
@@ -166,14 +225,35 @@ example : (g ∘ f) x = g (f x) := by simp
 
 lemma surjective_composition (hf : SurjectiveFunction f) :
     SurjectiveFunction (g ∘ f) ↔ SurjectiveFunction g := by
-  sorry
+  unfold SurjectiveFunction at *
+  constructor
+  · simp
+    intro h y
+    obtain ⟨x1, h1⟩ := h y
+    use f x1
+  · simp
+    intro h y
+    obtain ⟨x1, h1⟩ := h y
+    obtain ⟨x2, h2⟩ := hf x1
+    use x2
+    rw[h2]
+    exact h1
+
+
 
 /- When composing a surjective function by a linear function
 to the left and the right, the result will still be a
 surjective function. The `ring` tactic will be very useful here! -/
 lemma surjective_linear (hf : SurjectiveFunction f) :
     SurjectiveFunction (fun x ↦ 2 * f (3 * (x + 4)) + 1) := by
-  sorry
+  unfold SurjectiveFunction at *
+  simp
+  intro y
+  obtain ⟨x1, h1⟩ := hf ((y-1)/2)
+  use ((x1/3 -4))
+  ring_nf
+  rw [h1]
+  ring
 
 /- Let's prove Cantor's theorem:
 there is no surjective function from any set to its power set.
@@ -184,4 +264,3 @@ lemma exercise_cantor (α : Type*) (f : α → Set α) : ¬ Surjective f := by
   sorry
 
 end Surjectivity
-

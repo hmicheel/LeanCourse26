@@ -60,7 +60,7 @@ tactic and prove `Q`.
 In order to make use of an assumption
   `h : P ∨ Q`
 we use the obtain tactic:
-  `obtain hP | hQ := h`
+  `r`
 which creates two proof branches: one branch assuming `hP : P`,
 and one branch assuming `hQ : Q`.
 -/
