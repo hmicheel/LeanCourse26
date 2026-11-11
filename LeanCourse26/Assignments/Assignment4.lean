@@ -1,4 +1,4 @@
--- Name: <insert your name here>
+-- Name: Henning Micheel
 
 module
 
@@ -172,7 +172,12 @@ lemma contradictory_definition (f : ℕ → ℕ) (h : ∀ n : ℕ, f n = 1 + f (
 open Finset in
 lemma sum_cube_eq_sq_sum (n : ℕ) :
     (∑ i ∈ Finset.range (n + 1), (i : ℚ) ^ 3) = (∑ i ∈ Finset.range (n + 1), (i : ℚ)) ^ 2 := by
-  sorry
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [Finset.sum_range_succ]
+    rw [ih, sum_range_succ Nat.cast (n + 1)]
+    
 
 end
 
