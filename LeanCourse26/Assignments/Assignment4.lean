@@ -175,9 +175,18 @@ lemma sum_cube_eq_sq_sum (n : ℕ) :
   induction n with
   | zero => simp
   | succ n ih =>
-    rw [Finset.sum_range_succ]
+    rw [sum_range_succ]
     rw [ih, sum_range_succ Nat.cast (n + 1)]
-    
+    rw [add_sq']
+    rw [add_assoc, add_right_inj]
+    sorry
+
+
+
+
+
+
+
 
 end
 
@@ -201,32 +210,44 @@ def op (a b : Point4) : Point4 where
 
 -- Prove that op is associative.
 lemma op_assoc {a b c : Point4} : op (op a b) c = op a (op b c) := by
-  sorry
+  ext <;> simp only [op] <;> ring
+
+
 
 -- Investigate whether op is commutative: prove one of the following.
 lemma op_comm : ∀ a b : Point4, op a b = op b a := by
   sorry
 
 lemma not_op_comm : ¬(∀ a b : Point4, op a b = op b a) := by
-  sorry
+  intro h
+  have h1 := congrArg Point4.w (h ⟨0, 1, 0, 0⟩ ⟨0, 0, 1, 0⟩)
+  norm_num [op] at h1
 
 
 -- For the latter, you may the following helpful.
 example : ⟨0, 1, 2, 3⟩ ≠ (⟨0, 3, 2, 3⟩ : Point4) := by
-  sorry
+  simp
 
 example {x y : ℝ} (h : x ≠ y) : ⟨0, 1, x, 3⟩ ≠ (⟨0, 1, y, 3⟩ : Point4) := by
-  sorry
+  simpa
 
 -- If you want to use one of these lemmas, prove it also.
 lemma ne_of_ne_x {a b : Point4} (h : a.x ≠ b.x) : a ≠ b := by
-  sorry
+  intro hab
+  apply h
+  rw [hab]
 lemma ne_of_ne_y {a b : Point4} (h : a.y ≠ b.y) : a ≠ b := by
-  sorry
+  intro hab
+  apply h
+  rw [hab]
 lemma ne_of_ne_z {a b : Point4} (h : a.z ≠ b.z) : a ≠ b := by
-  sorry
+  intro hab
+  apply h
+  rw [hab]
 lemma ne_of_ne_w {a b : Point4} (h : a.w ≠ b.w) : a ≠ b := by
-  sorry
+  intro hab
+  apply h
+  rw [hab]
 
 
 section Bipointed
@@ -238,9 +259,22 @@ Then state and prove the lemma that for any element of a strict bipointed type w
 `∀ z, z ≠ x₀ ∨ z ≠ x₁.` -/
 
 -- give the definition here
-
+structure StrictBipointed (X : Type) where
+  x₀ : X
+  x₁ : X
+  ne : x₀ ≠ x₁
 
 -- state and prove the lemma here
+lemma StrictBipointed.forall_ne_or_ne {X : Type} (B : StrictBipointed X) :
+    ∀ z : X, z ≠ B.x₀ ∨ z ≠ B.x₁ := by
+  intro z
+  by_cases h : z = B.x₀
+  · right
+    intro h1
+    apply B.ne
+    rw [← h, h1]
+  · left
+    exact h
 
 
 end Bipointed
